@@ -4,7 +4,6 @@ import pytest
 
 from homework01 import gcd, fac, fib, flatten
 
-
 @pytest.mark.parametrize('a, b', [
     (5, 120),
     (7, 5040),

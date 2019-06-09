@@ -20,13 +20,11 @@ def fac(n):
     Функция должна вернуть факториал аргумента, числа n.
     """
     if n == 0 or n == 1:
-        print(1)
+        return 1
     else:
         list = [i for i in range(1, n + 1)]
         value = reduce(lambda x, y: x * y, list)
-        print(value)
-
-
+        return value
 def gcd(a, b):
     """
     Наибольший общий делитель (НОД) для двух целых чисел.
@@ -45,8 +43,7 @@ def gcd(a, b):
             a = a % b
         else:
             b = b % a
-    print(a + b)
-
+    return(a + b)
 
 def fib():
     """
@@ -60,12 +57,12 @@ def fib():
 
     while True:
       ..
-
     """
-    fi_vol = []
     a = -1
     b = 0
+    fi_vol = []
     while True:
+
         if len(fi_vol) <= 1:
             fi_vol.append(1)
             yield fi_vol
@@ -75,19 +72,22 @@ def fib():
             fi_vol.append(fi_vol[a] + fi_vol[b])
             yield fi_vol
 
-
 def flatten(seq):
-    # """
-    # Функция, преобразующая вложенные последовательности любого уровня
-    # вложенности в плоские, одноуровневые.
-    #
-    # >>> flatten([])
-    # []
-    # >>> flatten([1, 2])
-    # [1, 2]
-    # >>> flatten([1, [2, [3]]])
-    # [1, 2, 3]
-    # >>> flatten([(1, 2), (3, 4)])
-    # [1, 2, 3, 4]
-    # """
-    pass
+
+    """
+    Функция, преобразующая вложенные последовательности любого уровня
+    вложенности в плоские, одноуровневые.
+
+    >>> flatten([])
+    []
+    >>> flatten([1, 2])
+    [1, 2]
+    >>> flatten([1, [2, [3],[4, 5], [6, [7]]]])
+    [1, 2, 3]
+    >>> flatten([(1, 2), (3, 4)])
+    [1, 2, 3, 4]
+    """
+    res = []
+    for el in seq:
+        res += flatten(el) if (isinstance(el, list) or isinstance(el, tuple)) else [el]
+    return res
