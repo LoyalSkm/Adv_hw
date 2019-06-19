@@ -9,6 +9,7 @@
 # вы увидите результаты тестов ваших решений.
 
 from functools import reduce
+from timeit import timeit
 def fac(n):
     """
     Факториал
@@ -25,6 +26,7 @@ def fac(n):
         list = [i for i in range(1, n + 1)]
         value = reduce(lambda x, y: x * y, list)
         return value
+print(timeit(lambda: fac(5)))
 def gcd(a, b):
     """
     Наибольший общий делитель (НОД) для двух целых чисел.
@@ -58,19 +60,18 @@ def fib():
     while True:
       ..
     """
-    a = -1
-    b = 0
-    fi_vol = []
-    while True:
+    n = 1
+    n_prime = 1
 
-        if len(fi_vol) <= 1:
-            fi_vol.append(1)
-            yield fi_vol
-        else:
-            a += 1
-            b += 1
-            fi_vol.append(fi_vol[a] + fi_vol[b])
-            yield fi_vol
+    yield n
+    yield n_prime
+
+    while True:
+        tmp = n
+        n = n_prime
+        n_prime = n_prime + tmp
+
+        yield n_prime
 
 def flatten(seq):
 
@@ -91,3 +92,4 @@ def flatten(seq):
     for el in seq:
         res += flatten(el) if (isinstance(el, list) or isinstance(el, tuple)) else [el]
     return res
+print(flatten((1,3,(2,5,(123,5),15),15)))
