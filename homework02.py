@@ -14,7 +14,7 @@ def slice3(bord):
 def outcome(bord):
     try:
         win = slice3(bord)
-        winner = bord[[i for i in win if bord[i[0]] == bord[i[1]] == bord[i[2]]][0][0]] #ищим комбинации соответствующие победе и определяем кому она досталась
+        winner = bord[[i for i in win if bord[i[0]] == bord[i[1]] == bord[i[2]]][0][0]] #ищем комбинации соответствующие победе и определяем кому она досталась
         if winner == 1:
             return("X_WINS")
         else:
