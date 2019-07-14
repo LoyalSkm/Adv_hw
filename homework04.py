@@ -45,6 +45,7 @@ OrderedDict([(b'cow', b'moo'), (b'spam', b'eggs')])
 import re
 import string
 import itertools as it
+import sys
 from collections import OrderedDict
 
 def encode(val):
@@ -67,44 +68,47 @@ def encode(val):
 
 
 def decode(val):
+    def decode_first(val):
+        if val.startswith(b"i"):
+            match = re.match(b"i(-?\\d+)e", val)
+            list_val = match.group(1).decode("utf-8")
+            col = [str(x) for x in list_val]
 
-    if val.startswith(b"i"):
-        match = re.match(b"i(-?\\d+)e", val)
-        list_val = match.group(1).decode("utf-8")
-        col = [str(x) for x in list_val]
-        try:
             if col[0] == "0" and len(col) != 1:
-                print('''Traceback (most recent call last):
-  ...
-ValueError: invalid literal for int() with base 0: \'{}\''''.format(list_val))
+                print("ValueError: invalid literal for int() with base 0: \'{}\'".format(list_val))
+                sys.exit()
             else:
-                return int(match.group(1))
-        except ValueError as error:
-            print(error)
-    elif val.startswith(b"l") or val.startswith(b"d"):
-        l = []
-        rest = val[1:]
-        while not rest.startswith(b"e"):
-            elem, rest = decode(rest)
-            l.append(elem)
-        rest = rest[1:]
-        if val.startswith(b"l"):
-            return l
+                return int(match.group(1)), val[match.span()[1]:]
+
+        elif val.startswith(b"l") or val.startswith(b"d"):
+            l = []
+            rest = val[1:]
+            while not rest.startswith(b"e"):
+                elem, rest = decode_first(rest)
+                l.append(elem)
+            rest = rest[1:]
+            if val.startswith(b"l"):
+                return l, rest
+            else:
+                a = {i: j for i, j in zip(l[::2], l[1::2])}
+                return OrderedDict(a), rest
+        elif any(val.startswith(i.encode()) for i in string.digits):
+            m = re.match(b"(\\d+):", val)
+            length = int(m.group(1))
+            rest_i = m.span()[1]
+            start = rest_i
+            end = rest_i + length
+            return val[start:end], val[end:]
         else:
-            a = {i: j for i, j in zip(l[::2], l[1::2])}
-            return OrderedDict(a)
+            raise ValueError("Malformed input.")
 
-    elif any(val.startswith(i.encode()) for i in string.digits):
-        m = re.match(b"(\\d+):", val)
-        length = int(m.group(1))
-        rest_i = m.span()[1]
-        start = rest_i
-        end = rest_i + length
-        return val[start:end], val[end:]
-    else:
+    if isinstance(val, str):
+        val = val.encode("ascii")
+
+    ret, rest = decode_first(val)
+    if rest:
         raise ValueError("Malformed input.")
-
-print(decode(b'i03e'))
+    return ret
 if __name__ == '__main__':
     import doctest
     doctest.testmod(optionflags=doctest.IGNORE_EXCEPTION_DETAIL)
